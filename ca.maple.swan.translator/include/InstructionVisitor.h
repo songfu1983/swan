@@ -48,7 +48,7 @@ namespace swan {
   /// Disable printing memory and file information.
   static bool SWAN_PRINT_FILE_AND_MEMORY = false;
   /// Toggles printing the SIL for each function.
-  static bool PRINT_SIL = false;
+  static bool PRINT_SIL = true;
 
   /// This class translates SIL to CAst by using Swift's SILInstructionVisitor which has callbacks, including
   /// ones for every type of SILInstruction. This makes translating simple.

@@ -57,6 +57,7 @@ def run_test(filename):
         " -sanitizers " + " ".join(sss["sanitizers"])
 
     cmd = "./gradlew runSingleGenericTest --args=\'" + args + "\'"
+    print("the arguments are " + cmd)
 
     print("\nRunning test for " + filename + "...")
     print(cmd)
