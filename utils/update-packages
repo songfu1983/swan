@@ -38,6 +38,8 @@ def update_swift(tag):
         system("git clone --branch " + tag + " " + SWIFT_REPO_URL)
         # First clone without tag since tag may not exist for each subrepo.
         system("/." + SWIFT_UTILS_DIR + "update-checkout --clone")
+        # https://forums.swift.org/t/cant-build-swift-5-1-toolchain/32403/5
+        system("git cherry-pick 259afb2a567f7111fc692baa986f77d786999575")
         system("/." + SWIFT_UTILS_DIR + "update-checkout --tag " + tag)
         chdir(ROOT)
         return
@@ -46,6 +48,7 @@ def update_swift(tag):
         system("git reset --hard HEAD")
         system("git fetch")
         system("git checkout -f " + tag)
+        system("git cherry-pick 259afb2a567f7111fc692baa986f77d786999575")
         system("/." + SWIFT_UTILS_DIR + "update-checkout --tag " + tag)
     chdir(ROOT)
 

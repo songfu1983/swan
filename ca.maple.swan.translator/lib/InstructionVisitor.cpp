@@ -25,7 +25,6 @@
 
 #include "InstructionVisitor.h"
 #include "swift/AST/Module.h"
-#include "swift/AST/SourceFile.h"
 #include "swift/AST/Types.h"
 #include "swift/Demangling/Demangle.h"
 #include "swift/SIL/SILModule.h"
@@ -118,7 +117,7 @@ void InstructionVisitor::visitSILFunction(SILFunction *F) {
 
   // Set function result type.
   if (F->getLoweredFunctionType()->getNumResults() == 1) {
-    currentFunction->returnType = F->getLoweredFunctionType()->getSingleResult().getSILStorageType(F->getModule(), F->getLoweredFunctionType()).getAsString();
+    currentFunction->returnType = F->getLoweredFunctionType()->getSingleResult().getSILStorageType().getAsString();
   } else if (F->getLoweredFunctionType()->getNumResults() == 0) {
     currentFunction->returnType = "void";
   } else {
@@ -293,8 +292,8 @@ void InstructionVisitor::printSILInstructionInfo() {
 
 void InstructionVisitor::handleSimpleInstr(SILInstruction *UIB) {
   std::list<jobject> operands;
-  int i = 0;
-  for (auto InstOperand : UIB->getOperandValues()) {
+  for (unsigned int i = 0; i < UIB->getNumOperands(); ++i) {
+      auto InstOperand = UIB->getOperand(i);
       std::string OperandName = addressToString(InstOperand.getOpaqueValue());
       std::string OperandType = InstOperand->getType().getAsString();
       if (SWAN_PRINT) {
@@ -305,12 +304,11 @@ void InstructionVisitor::handleSimpleInstr(SILInstruction *UIB) {
         CAstWrapper::PRIMITIVE,
         MAKE_CONST(OperandName.c_str()),
         MAKE_CONST(OperandType.c_str())));
-      ++i;
   }
-  i = 0;
   ADD_PROP(MAKE_NODE2(CAstWrapper::PRIMITIVE, MAKE_ARRAY(&operands)));
   std::list<jobject> results;
-  for (auto InstResult : UIB->getResults()) {
+  for (unsigned int i = 0; i < UIB->getNumResults(); ++i) {
+    auto InstResult = UIB->getResult(i);
     std::string ResultName = addressToString(InstResult.getOpaqueValue());
     std::string ResultType = InstResult->getType().getAsString();
     if (SWAN_PRINT) {
@@ -321,7 +319,6 @@ void InstructionVisitor::handleSimpleInstr(SILInstruction *UIB) {
       CAstWrapper::PRIMITIVE,
       MAKE_CONST(ResultName.c_str()),
       MAKE_CONST(ResultType.c_str())));
-    ++i;
   }
   ADD_PROP(MAKE_NODE2(CAstWrapper::PRIMITIVE, MAKE_ARRAY(&results)));
 }
@@ -567,7 +564,7 @@ void InstructionVisitor::visitSetDeallocatingInst(SetDeallocatingInst *SDI)  {
   handleSimpleInstr(SDI);
 }
 
-void InstructionVisitor::visitStrongCopyUnownedValueInst(StrongCopyUnownedValueInst *CUVI) {
+void InstructionVisitor::visitCopyUnownedValueInst(CopyUnownedValueInst *CUVI) {
   handleSimpleInstr(CUVI);
 }
 
@@ -1088,7 +1085,7 @@ void InstructionVisitor::visitDestructureTupleInst(DestructureTupleInst *DTI) {
 void InstructionVisitor::visitStructInst(StructInst *SI) {
   handleSimpleInstr(SI);
   std::list<jobject> Fields;
-  ArrayRef<VarDecl*>::iterator property = SI->getStructDecl()->getStoredProperties().begin();
+  auto property = SI->getStructDecl()->getStoredProperties().begin();
   for (Operand &op : SI->getElementOperands()) {
     assert(property != SI->getStructDecl()->getStoredProperties().end());
     VarDecl *field = *property;

@@ -54,7 +54,7 @@ struct Observer : public FrontendObserver {
 
   /// This callback method is called by the compiler frontend once the
   /// SILModule is generated.
-  void performedSILGeneration(SILModule &Module) override {
+  void performedSILGeneration(SILModule &Module) {
     Instance->analyzeSILModule(Module);
   }
 };

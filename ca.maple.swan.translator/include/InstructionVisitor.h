@@ -168,7 +168,7 @@ namespace swan {
     void visitStrongRetainInst(StrongRetainInst *SRTI);
     void visitStrongReleaseInst(StrongReleaseInst *SRLI);
     void visitSetDeallocatingInst(SetDeallocatingInst *SDI);
-    void visitStrongCopyUnownedValueInst(StrongCopyUnownedValueInst *CUVI);
+    void visitCopyUnownedValueInst(CopyUnownedValueInst *CUVI);
     void visitStrongRetainUnownedInst(StrongRetainUnownedInst *SRUI);
     void visitUnownedRetainInst(UnownedRetainInst *URTI);
     void visitUnownedReleaseInst(UnownedReleaseInst *URLI);
