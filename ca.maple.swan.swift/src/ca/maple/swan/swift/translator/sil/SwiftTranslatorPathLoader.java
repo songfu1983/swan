@@ -40,10 +40,17 @@ public class SwiftTranslatorPathLoader {
         try {
             System.load(SWANDir + sharedDir + libName + ".dylib");
         } catch (UnsatisfiedLinkError dylibException) {
+            dylibException.printStackTrace();
             try {
                 System.load(SWANDir + sharedDir + libName + ".so");
             } catch (UnsatisfiedLinkError soException) {
-                System.err.println("Could not find shared library!");
+                String errorMsg = "Could not find shared library! Possible reasons:\n" +
+                        "    1. set(PACKAGES_DIR \"${CMAKE_CURRENT_SOURCE_DIR}/../packages/\") is uncommented in \n" +
+                        "       ca.maple.swan.translator/CMakeLists.txt" +
+                        "    2. ca.maple.swan.translator/build/libs/swiftWala/shared/libswiftWala.* doesn't exist" +
+                        "    3. packages/WALA/com.ibm.wala.cast/cast/build/lib/main/debug/libcast.* doesn't exist\n" +
+                        "NOTE: If .dylib isn't found, we try to find .so. Therefore, the stack trace shows a soException.";
+                System.err.println(errorMsg);
                 soException.printStackTrace();
             }
         }
